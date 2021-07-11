@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="Assets/style.css">
+    <title>Javascript Quiz</title>
+</head>
+<body>
+    <header>
+        <div>
+            <a href="highscores.html" id="highscores">View Highscores</a>
+        </div>
+        <div id="timer">Time: 60</div>
+    </header>
+    <main>
+        <h1>Javascript Fundamentals Quiz</h1>
+        <p>This is a timed quiz testing your knowledge of fundamental javascript skills. After clicking "Start Quiz," you will have 1 minutes to answer as many questions as you can. Every incorrect question will deduct 10 seconds from your time. If you finish before the clock runs out, the remaining time will be added to your score. Good luck!</p>
+        <div id=button-container>
+            <button id="startbtn">Start Quiz</button>
+            <button class="answerOption" id="answerOption1"></button>
+            <button class="answerOption" id="answerOption2"></button>
+            <button class="answerOption" id="answerOption3"></button>
+            <button class="answerOption" id="answerOption4"></button>
+        </div>
+    </main>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script type="text/javascript" src="./Assets/script.js"></script> 
+</body>
+</html>
