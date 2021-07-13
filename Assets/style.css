@@ -31,8 +31,6 @@ header {
 main {
     flex-direction:column;
     display:flex;
-    margin-left: 25%;
-    margin-right: 25%;
 }
 
 p {
@@ -70,11 +68,6 @@ button {
     content: counter(answerCounter) ". ";
 }
 
-button:before {
-    counter-increment: answerCounter;
-    content: counter(answerCounter) ". ";
-}
-
 #button-container {
     display: flex;
     margin-bottom:1rem;
@@ -90,4 +83,14 @@ button:hover {
     display:block;
     color:white;
     background-color: rgb(83, 31, 83);
+}
+
+#highscoresbtn {
+    display: flex;
+    align-content: center;
+    margin-top: 1.5em;
+}
+
+#highscores:before {
+    content:none;
 }
