@@ -1,9 +1,10 @@
 * {
-    place-items:center;
     font-family:sans-serif;
+    place-items:center;
 }
 
 body {
+    place-items:center;
     border:0px;
     margin:0px;
     padding:0px;
@@ -11,17 +12,17 @@ body {
 }
 
 header {
-    color:white;
+    color:black;
     display:flex;
     justify-content: space-between;
     height:50px;
-    background:rgb(131, 32, 131);
+    font-weight:bold;
 }
 
 #highscores {
     margin-left:2em;
-    color:white;
     text-decoration:none;
+    color:rgb(131, 32, 131);
 }
 
 #timer {
@@ -29,13 +30,14 @@ header {
 }
 
 main {
-    flex-direction:column;
-    display:flex;
+    flex-direction: column;
+    display: flex;
+    flex-wrap: wrap;
+    margin: 2em 25%;
 }
 
 p {
     text-align:center;
-    margin: 0 20%;
 }
 
 #startbtn {
@@ -50,9 +52,8 @@ p {
 
 button {
     color:white;
-    display:block;
     background-color: rgb(148, 55, 148);
-    border-radius: 12px;
+    border-radius: 7px;
     cursor:pointer;
     font-size:20px;
 }
@@ -70,7 +71,6 @@ button {
 
 #button-container {
     display: flex;
-    margin-bottom:1rem;
     flex-direction: column;
     align-items: flex-start;
 }
@@ -80,7 +80,6 @@ button {
 }
 
 button:hover {
-    display:block;
     color:white;
     background-color: rgb(83, 31, 83);
 }
@@ -93,4 +92,16 @@ button:hover {
 
 #highscores:before {
     content:none;
+}
+
+#inline {
+    display:inline;
+}
+
+textarea {
+    margin: 0px 10px -4px 0px;
+    width: 150px;
+    height: 1em;
+    resize: none;
+    overflow: hidden;
 }
