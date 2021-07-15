@@ -21,6 +21,7 @@ var answerOptionDisplayInterval = setInterval(function () {
 
     }
 }, 1000);;
+var highscoresArray = [];
 
 
 var questions = ["The Javascript file is linked with the HTML using the __________ element.", "How can you select the <p> element from the HTML using Javascript?", "How can you set a 'startQuiz' function to occur when you click the 'startBtn' variable?", "How can you define variables using Javascript?"];
@@ -119,22 +120,68 @@ function updateHighscores() {
 }
 
 function highscoresPage() {
+    var userInitials = document.querySelector("textarea").value;
+
+    if (userInitials == "") {
+        return;
+    }
+
+    localStorage.setItem("initials", userInitials);
+
     headerEl.setAttribute("style", "display:none");
     h1.textContent = "Highscores";
     var submitPageContent = document.querySelectorAll("p");
     for (let i = 0; i < submitPageContent.length; i++) {
         submitPageContent[i].setAttribute("style", "display:none");
     }
+
+    var highscoresList = document.createElement("ol");
+    for (var i = 0; i < highscoresArray.length; i++) {
+        var userScore = highscoresArray[i];
+    
+        var li = document.createElement("li");
+        li.textContent = userScore;
+        highscoresList.appendChild(li);
+    }
+    userScore = document.createElement("li");
+    userScore.textContent = localStorage.getItem("initials") + " - " + localStorage.getItem("timeleft");
+    highscoresList.appendChild(userScore);
+    mainEl.appendChild(highscoresList);
+    highscoresArray.push(userScore.textContent);
+    storeHighscores();
+
+    var highscoreButtonsContainer = document.createElement("div");
+    highscoreButtonsContainer.setAttribute("id","inline");
+
     var goBackButton = document.createElement("button");
-    goBackButton.setAttribute("id","highscoresbtn inline");
+    goBackButton.setAttribute("onClick", "window.location.reload();")
     goBackButton.textContent = "Go Back";
-    mainEl.appendChild(goBackButton);
-    goBackButton.addEventListener("click", location.reload);
+    highscoreButtonsContainer.appendChild(goBackButton);
+
     var clearHighscoresButton = document.createElement("button");
-    clearHighscoresButton.setAttribute("id","highscoresbtn inline");
     clearHighscoresButton.textContent = "Clear Highscores";
-    mainEl.appendChild(clearHighscoresButton)
+    highscoreButtonsContainer.appendChild(clearHighscoresButton);
+    clearHighscoresButton.addEventListener("click", function() {
+        highscoresList.innerHTML = "";
+        localStorage.removeItem("highscoresArray");
+    })
+    mainEl.appendChild(highscoreButtonsContainer);
+}
+
+function init() {
+    // Get stored todos from localStorage
+    var highscoresArrayStored = JSON.parse(localStorage.getItem("highscoresArray"));
+  
+    // If todos were retrieved from localStorage, update the todos array to it
+    if (highscoresArrayStored !== null) {
+      highscoresArray = highscoresArrayStored;
+    }
+
+  }
+  
+function storeHighscores() {
+    localStorage.setItem("highscoresArray", JSON.stringify(highscoresArray));
 }
 
 startBtn.addEventListener("click", startQuiz);
-// incorrectAnswer.addEventListener("click", nextQuestionIncorrect);
+init();

@@ -85,7 +85,6 @@ button:hover {
 }
 
 #highscoresbtn {
-    display: flex;
     align-content: center;
     margin-top: 1.5em;
 }
