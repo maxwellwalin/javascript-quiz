@@ -1,6 +1,7 @@
 var timer = document.querySelector("#timer");
 var mainEl = document.querySelector("main");
 var headerEl = document.querySelector("header");
+var viewHighscoresButton = document.querySelector("#highscores");
 var startBtn = document.querySelector("#startbtn");
 var quizDescription = document.querySelector("p");
 var h1 = document.querySelector("h1");
@@ -11,17 +12,41 @@ var questionCounter = 0;
 var randomIndex = [Math.floor(Math.random() * 3)];
 var timerInterval;
 var timeLeft;
-var answerOptionDisplayInterval = setInterval(function () {
-    var displayTimeLeft = 3;
+
+function answerOptionDisplay(event) {
+    var displayTimeLeft = 100;
+    var element = event.target;
+    var correctDisplay = document.createElement("div");
+    correctDisplay.setAttribute("id","answerDisplay");
+    correctDisplay.textContent = "Correct!";
+
+    var incorrectDisplay = document.createElement("div");
+    incorrectDisplay.setAttribute("id","answerDisplay");
+    incorrectDisplay.textContent = "Incorrect!";
+
+    
+    answerOptionDisplayInterval = setInterval(function () {
     displayTimeLeft--;
 
-    if (timeLeft===0) {
-    timer.textContent = "Time's up!";
-    clearInterval(timerInterval);
-
+    if (element.matches("#correctAnswer")) {
+    correctDisplay.setAttribute("style", "display:block;");
+    mainEl.appendChild(correctDisplay);
+    } else {
+    incorrectDisplay.setAttribute("style", "display:block;");
+    mainEl.appendChild(incorrectDisplay);
     }
-}, 1000);;
+
+    if (displayTimeLeft === 0) {
+        mainEl.children[mainEl.children.length - 1].setAttribute("style", "display:none;");
+        element.removeAttribute("id");
+        clearInterval(answerOptionDisplayInterval);
+    }
+
+    }, 10);
+};
+
 var highscoresArray = [];
+var userInitials = "";
 
 
 var questions = ["The Javascript file is linked with the HTML using the __________ element.", "How can you select the <p> element from the HTML using Javascript?", "How can you set a 'startQuiz' function to occur when you click the 'startBtn' variable?", "How can you define variables using Javascript?"];
@@ -56,7 +81,9 @@ function startQuiz(event) {
 
 function nextQuestion() {
     for (let i = 0; i < answerOptionButtons.length; i++) {
-        answerOptionButtons[i].removeEventListener("click", nextQuestion)
+        answerOptionButtons[i].removeEventListener("click", nextQuestion);
+        answerOptionButtons[i].removeEventListener("click", answerOptionDisplay);
+        answerOptionButtons[i].removeEventListener("click", nextQuestionIncorrect);
         }
     
     h1.textContent = questions[randomIndex]
@@ -65,9 +92,12 @@ function nextQuestion() {
     for (let i = 0; i < answerOptionButtons.length; i++) {
         answerOptionButtons[i].textContent = answers[randomIndex][i];
         if (i == randomIndex) {
-            answerOptionButtons[i].addEventListener("click", nextQuestion)
+            answerOptionButtons[i].setAttribute("id", "correctAnswer");
+            answerOptionButtons[i].addEventListener("click", nextQuestion);
+            answerOptionButtons[i].addEventListener("click", answerOptionDisplay);
         } else {
-            answerOptionButtons[i].addEventListener("click", nextQuestionIncorrect)
+            answerOptionButtons[i].addEventListener("click", nextQuestionIncorrect);
+            answerOptionButtons[i].addEventListener("click", answerOptionDisplay);
             }
         }
     
@@ -82,6 +112,13 @@ function nextQuestion() {
 
 function nextQuestionIncorrect() {
     clearInterval(timerInterval);
+
+    for (let i = 0; i < answerOptionButtons.length; i++) {
+        answerOptionButtons[i].removeEventListener("click", nextQuestion);
+        answerOptionButtons[i].removeEventListener("click", answerOptionDisplay);
+        answerOptionButtons[i].removeEventListener("click", nextQuestionIncorrect);
+        }
+
     timeLeft = localStorage.getItem("timeleft") - 10;
     localStorage.setItem("timeleft", JSON.stringify(timeLeft))
     timer.textContent = "Timer: " + timeLeft;
@@ -108,27 +145,24 @@ function gameOver() {
     var submitP = document.createElement("p");
     submitP.innerHTML = "Enter initials: <textarea></textarea><button id='submit'>Submit</button>";
     mainEl.appendChild(submitP);
-    document.querySelector("#submit").addEventListener("click", highscoresPage);
+    document.querySelector("#submit").addEventListener("click", function() {
+        userInitials = document.querySelector("textarea").value;
+        if (userInitials == "") {
+            return;
+        } else {
+            highscoresPage()
+        }
+    }
+    );
 
     for (let i = 0; i < answerOptionButtons.length; i++) {
         answerOptionButtons[i].setAttribute("style", "display:none;");
         }
 }
 
-function updateHighscores() {
-
-}
-
 function highscoresPage() {
-    var userInitials = document.querySelector("textarea").value;
-
-    if (userInitials == "") {
-        return;
-    }
-
     localStorage.setItem("initials", userInitials);
-
-    headerEl.setAttribute("style", "display:none");
+    headerEl.setAttribute("style", "visibility:hidden");
     h1.textContent = "Highscores";
     var submitPageContent = document.querySelectorAll("p");
     for (let i = 0; i < submitPageContent.length; i++) {
@@ -168,20 +202,57 @@ function highscoresPage() {
     mainEl.appendChild(highscoreButtonsContainer);
 }
 
+function viewHighscoresPage() {
+    for (let i = 0; i < mainEl.children.length; i++) {
+        mainEl.children[i].innerHTML = "";
+    }
+    quizDescription.setAttribute("style", "display:none")
+    startBtn.setAttribute("style", "display:none")
+    mainEl.setAttribute("style" , "align-items: flex-start; margin: 2em 25%;")
+    headerEl.setAttribute("style", "visibility:hidden");
+    h1.textContent = "Highscores";
+    var highscoresList = document.createElement("ol");
+    for (var i = 0; i < highscoresArray.length; i++) {
+        var userScore = highscoresArray[i];
+    
+        var li = document.createElement("li");
+        li.textContent = userScore;
+        highscoresList.appendChild(li);
+    }
+
+    mainEl.appendChild(highscoresList);
+
+    var highscoreButtonsContainer = document.createElement("div");
+    highscoreButtonsContainer.setAttribute("id","inline");
+
+    var goBackButton = document.createElement("button");
+    goBackButton.setAttribute("onClick", "window.location.reload();")
+    goBackButton.textContent = "Go Back";
+    highscoreButtonsContainer.appendChild(goBackButton);
+
+    var clearHighscoresButton = document.createElement("button");
+    clearHighscoresButton.textContent = "Clear Highscores";
+    highscoreButtonsContainer.appendChild(clearHighscoresButton);
+    clearHighscoresButton.addEventListener("click", function() {
+        highscoresList.innerHTML = "";
+        localStorage.removeItem("highscoresArray");
+    })
+    mainEl.appendChild(highscoreButtonsContainer);
+}
+
 function init() {
-    // Get stored todos from localStorage
     var highscoresArrayStored = JSON.parse(localStorage.getItem("highscoresArray"));
   
-    // If todos were retrieved from localStorage, update the todos array to it
     if (highscoresArrayStored !== null) {
       highscoresArray = highscoresArrayStored;
     }
-
   }
-  
+
 function storeHighscores() {
     localStorage.setItem("highscoresArray", JSON.stringify(highscoresArray));
 }
 
 startBtn.addEventListener("click", startQuiz);
+viewHighscoresButton.addEventListener("click", viewHighscoresPage);
+
 init();

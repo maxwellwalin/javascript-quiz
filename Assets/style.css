@@ -104,3 +104,10 @@ textarea {
     resize: none;
     overflow: hidden;
 }
+
+#answerDisplay {
+    margin-top: 10px;
+    font-size: 20px;
+    color:grey;
+    font-style: italic;
+}
